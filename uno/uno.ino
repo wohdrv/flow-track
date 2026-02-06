@@ -1,23 +1,31 @@
 #include <SoftwareSerial.h>
-SoftwareSerial s(5,6); //RX, TX
+#include <Stepper.h>
+
+SoftwareSerial s(5, 6);
+
+const int stepsPerRevolution = 2048;
+Stepper myStepper(stepsPerRevolution, 8, 10, 9, 11);
 
 void setup() {
-  // put your setup code here, to run once:
   s.begin(9600);
+
+  myStepper.setSpeed(10); 
+  
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  int data=50;
-  if(s.available()>0)
-  {
-    char c=s.read();
-    if(c=='s')
-    {
-      s.write(data);
+  if (s.available() > 0) {
+    char c = s.read();
+    if (c == '1') {
       digitalWrite(LED_BUILTIN, HIGH);
-      delay(200);
+      
+      myStepper.step(stepsPerRevolution);
+      digitalWrite(8, LOW);
+      digitalWrite(9, LOW);
+      digitalWrite(10, LOW);
+      digitalWrite(11, LOW);
+      
       digitalWrite(LED_BUILTIN, LOW);
     }
   }
